@@ -27,7 +27,7 @@ def sticker_handler(message):
                                  emoji = message.sticker.emoji     \
                             ))
 
-@bot.message_handler(content_types=["text"], regexp=u"(?imu)(пездюк)")
+@bot.message_handler(content_types=["text"], regexp=config.trigger_regex)
 def repeat_all_messages(message):
     bot.reply_to(message, message.text)
 
