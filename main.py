@@ -21,7 +21,12 @@ import time
 #logger = telebot.logger
 #telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
-bot = telebot.TeleBot(config.token)
+TOKEN = config.token
+NAME = config.name
+TRIGGER_REGEX = config.trigger_regex
+FAREWELL = config.farewell
+
+bot = telebot.TeleBot(TOKEN)
 
 #https://github.com/eternnoir/pyTelegramBotAPI#methods
 
@@ -33,15 +38,24 @@ bot = telebot.TeleBot(config.token)
 #                                 emoji = message.sticker.emoji     \
 #                            ))
 
+@bot.message_handler(commands=['start'])
+def repeat_addressed_messages(message):
+    bot.reply_to(message, """\
+Привет, я {0}! Спроси меня, что-то вроде
+"Что мне выбрать, {0}: одно или другое, пятое или десятое"
+Я постараюсь помочь с выбором.
+{1}
+""".format(NAME, FAREWELL))
+
 @bot.message_handler(commands=['anecdot'])
 def repeat_addressed_messages(message):
     text = anecdot.get_anecdot()
     if text:
         bot.send_message(message.chat.id, text)
 
-@bot.message_handler(content_types=["text"], regexp=config.trigger_regex)
+@bot.message_handler(content_types=["text"], regexp=TRIGGER_REGEX)
 def repeat_addressed_messages(message):
-    question = decision.extract_question(message.text, config.trigger_regex)
+    question = decision.extract_question(message.text, TRIGGER_REGEX)
     if question:
         answers = decision.split_question(question)
         bot.reply_to(message, decision.decide(answers))
