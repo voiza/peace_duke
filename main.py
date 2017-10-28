@@ -5,16 +5,17 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import config
-import decision
 import telebot
+
+import decision
+import urllib
 
 import re
 
 import sys
 import time
 
-import logging
-
+#import logging
 #logger = telebot.logger
 #telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 
@@ -43,5 +44,5 @@ if __name__ == '__main__':
     while True:
         try:
             bot.polling(none_stop=True)
-        except Exception:
+        except urllib.error.HTTPError:
             time.sleep(10)
