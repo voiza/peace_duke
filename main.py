@@ -42,7 +42,7 @@ bot = telebot.TeleBot(TOKEN)
 def repeat_addressed_messages(message):
     bot.reply_to(message, """\
 Привет, я {0}! Спроси меня, что-то вроде
-"Что мне выбрать, {0}: одно или другое, пятое или десятое"
+"Что мне выбрать, {0}: одно или другое, пятое или десятое?"
 Я постараюсь помочь с выбором.
 {1}
 """.format(NAME, FAREWELL))
