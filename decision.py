@@ -8,12 +8,14 @@ import random
 import re
 
 def decide(choices):
+    if not choices:
+        return "Нельзя ответить на вопрос, на который нет ответа..."
     if len(choices) == 1:
         return "Да" if random.randint(0,1) == 1 else "Нет"
     return random.choice(choices)
 
 def extract_question(raw_string, refer_to_regex):
-    if not re.match("\\\\?", raw_string):
+    if not re.match("(?imsu).+\\?", raw_string):
         return ""
 
     pre_variation_regex="(?imsu)"+".*"+refer_to_regex+".*(:|-)\\s*";
@@ -32,8 +34,10 @@ def extract_question(raw_string, refer_to_regex):
         return scpre_rc.sub("", raw_string)
 
 def split_question(question_str):
-    p = re.split("\\s?(?:,|или|or)\\s?", question_str[:-1])
-    return list(set(p))
+    if question_str:
+        p = re.split("\\s?(?:,|или|or)\\s?", question_str[:-1])
+        return list(set(p))
+    return []
 
 if __name__ == '__main__':
     #in_str = raw_input("Enter a question: ")
@@ -75,6 +79,9 @@ if __name__ == '__main__':
         Пездюк, пора праздновать или дебажить?"""
              ,'q': "пора праздновать или дебажить?"
              ,'s': ["пора праздновать","дебажить"]}
+           , {'r': "Пездюк, тест без вопроса"
+             ,'q': ""
+             ,'s': []}
            ]
     for el in data:
         q = extract_question(el['r'], "(?imsu)пездюк")
