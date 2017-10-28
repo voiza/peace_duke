@@ -8,6 +8,8 @@ import config
 import telebot
 
 import decision
+import anecdot
+
 import urllib
 
 import re
@@ -30,6 +32,12 @@ bot = telebot.TeleBot(config.token)
 #                            dict(pack  = message.sticker.set_name, \
 #                                 emoji = message.sticker.emoji     \
 #                            ))
+
+@bot.message_handler(commands=['anecdot'])
+def repeat_addressed_messages(message):
+    text = anecdot.get_anecdot()
+    if text:
+        bot.send_message(message.chat.id, text)
 
 @bot.message_handler(content_types=["text"], regexp=config.trigger_regex)
 def repeat_addressed_messages(message):
