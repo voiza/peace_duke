@@ -15,7 +15,7 @@ def decide(choices):
     return random.choice(choices)
 
 def extract_question(raw_string, refer_to_regex):
-    if not re.match("(?imsu).+\\?", raw_string):
+    if not re.match("(?imsu).*"+refer_to_regex+".*\\?", raw_string):
         return ""
 
     pre_variation_regex="(?imsu)"+".*"+refer_to_regex+".*(:|-)\\s*";
@@ -23,7 +23,13 @@ def extract_question(raw_string, refer_to_regex):
     if pre_rc.search(raw_string):
         return pre_rc.sub("", raw_string)
 
-    post_variation_regex="(?imsu)"+"[?.,][^,^.^?]*"+refer_to_regex+".*\\?"
+    post_variation_with_pre_comma_regex = "(?imsu)"+".*[.,-].*"+refer_to_regex+"[\\s?.,-]*(.+(?:,|или|or)+.+)"
+    post_pcrc = re.compile(post_variation_with_pre_comma_regex)
+    post_prcr_match = post_pcrc.match(raw_string)
+    if post_prcr_match:
+        return post_prcr_match.group(1)
+
+    post_variation_regex="(?imsu)"+"\\s*[?.,-][^-^,^.^?]*"+refer_to_regex+".*\\?"
     post_rc = re.compile(post_variation_regex)
     if post_rc.search(raw_string):
         return post_rc.sub("?", raw_string)
@@ -35,8 +41,8 @@ def extract_question(raw_string, refer_to_regex):
 
 def split_question(question_str):
     if question_str:
-        p = re.split("\\s?(?:,|или|or)\\s?", question_str[:-1])
-        return list(set(p))
+        p = re.split("(?imsu)"+"\\s?(?:,|или|or|\n)\\s?", question_str[:-1])
+        return list(set(p)-set(['']))
     return []
 
 if __name__ == '__main__':
@@ -62,6 +68,9 @@ if __name__ == '__main__':
            , {'r': "Овцы сыты или волки целы. женеманс, что скажешь?"
              ,'q': "Овцы сыты или волки целы?"
              ,'s': ["Овцы сыты", "волки целы"]}
+           , {'r': "Овцы сыты или волки целы - женеманс, что скажешь?"
+             ,'q': "Овцы сыты или волки целы?"
+             ,'s': ["Овцы сыты", "волки целы"]}
            , {'r': "Овцы сыты или волки целы, Женеманс, что скажешь?"
              ,'q': "Овцы сыты или волки целы?"
              ,'s': ["Овцы сыты", "волки целы"]}
@@ -74,11 +83,25 @@ if __name__ == '__main__':
            , {'r': "Женеманс, надо идти на работу?"
              ,'q': "надо идти на работу?"
              ,'s': ["надо идти на работу"]}
+           , {'r': "Что бы ты ответил, Женеманс, надо идти на работу или лучше дома остаться?"
+             ,'q': "надо идти на работу или лучше дома остаться?"
+             ,'s': ["надо идти на работу", "лучше дома остаться"]}
            , {'r': """Gera typed:
 
         Женеманс, пора праздновать или дебажить?"""
              ,'q': "пора праздновать или дебажить?"
-             ,'s': ["пора праздновать","дебажить"]}
+             ,'s': ["пора праздновать", "дебажить"]}
+           , {'r': """Женеманс, какое число выберешь:
+1
+2
+3
+?"""
+             ,'q': """1
+2
+3
+?"""
+
+             ,'s': ["1","2","3"]}
            , {'r': "Женеманс, тест без вопроса"
              ,'q': ""
              ,'s': []}
@@ -91,4 +114,4 @@ if __name__ == '__main__':
         s = split_question(q)
         if set(s) != set(el['s']):
             print("Fail split:\n\tr:%s\n\ta:%s\n\tq:%s" %(q, s, el['s']))
-        print(el['r'], "->", decide(s))
+#        print(el['r'], "->", decide(s))
