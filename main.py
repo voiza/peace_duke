@@ -66,5 +66,5 @@ if __name__ == '__main__':
     while True:
         try:
             bot.polling(none_stop=True)
-        except urllib.error.HTTPError:
+        except Exception: # recover from any error, please
             time.sleep(10)
