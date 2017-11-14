@@ -9,9 +9,15 @@ import re
 
 def decide(choices):
     if not choices:
-        return "Нельзя ответить на вопрос, на который нет ответа..."
+        return "Что?"
     if len(choices) == 1:
-        return "Да" if random.randint(0,1) == 1 else "Нет"
+        r = random.randint(0,100) # 101 res, including both 0 and 100
+        if r == 50:
+            return "Ой всё!"
+        elif r > 50:
+            return "Да"
+        else:
+            return "Нет"
     return random.choice(choices)
 
 def extract_question(raw_string, refer_to_regex):
@@ -41,7 +47,7 @@ def extract_question(raw_string, refer_to_regex):
 
 def split_question(question_str):
     if question_str:
-        p = re.split("(?imsu)"+"\\s?(?:,|или|or|\n)\\s?", question_str[:-1])
+        p = re.split("(?imsu)"+"\\s*(?:,|\\sили\\s|\\sor\\s|\n)\\s*", question_str[:-1])
         return list(set(p)-set(['']))
     return []
 
@@ -105,6 +111,9 @@ if __name__ == '__main__':
            , {'r': "Женеманс, тест без вопроса"
              ,'q': ""
              ,'s': []}
+           , {'r': "Женеманс, Филипс или Tornado?"
+             ,'q': "Филипс или Tornado?"
+             ,'s': ["Филипс", "Tornado"]}
            ]
     for el in data:
         q = extract_question(el['r'], "(?imsu)Женеманс")
