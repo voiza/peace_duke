@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import config
 import telebot
+import isalivethread
 
 import decision
 import anecdot
@@ -63,8 +64,12 @@ def repeat_addressed_messages(message):
 sys.tracebacklimit = 0
 
 if __name__ == '__main__':
+    sanity_thread = isalivethread.IsAliveThread(bot)
+    sanity_thread.start()
     while True:
         try:
             bot.polling(none_stop=True)
         except Exception: # recover from any error, please
             time.sleep(10)
+    sanity_thread.stop = True
+    sanity_thread.join()
