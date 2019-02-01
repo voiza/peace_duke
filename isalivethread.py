@@ -13,12 +13,19 @@ class IsAliveThread(threading.Thread):
 
     def run(self):
         while not self.stop:
-            killer = threading.Timer(self.timeout, self.kill_bot)
-            killer.start()
+            try:
+                killer = threading.Timer(self.timeout, self.kill_bot)
+                killer.start()
+            except Exception:
+                print("killer is killed")
+                time.sleep(self.sleep_time)
+                continue
+
             try:
                 ret = self.telebot.get_me()
             except Exception:
                 self.kill_bot()
+
             killer.cancel()
             time.sleep(self.sleep_time)
 
