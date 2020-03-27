@@ -8,7 +8,7 @@ from lxml import html
 
 def get_anecdot():
     return "Приходит как-то человек в ботобар и говорит /anecdot, а бот ему отвечет: this->anecdot()"
-### you'll get banned if to use following:
+### using this will result in a ban:
 #    response = urllib2.urlopen('https://pda.anekdot.ru/anekdots/random/')
 #    text = response.read()
 #    text = text.replace("<br>", "\n")
