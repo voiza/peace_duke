@@ -6,7 +6,6 @@ from __future__ import print_function
 import datetime
 import requests
 import itertools
-import matplotlib.pyplot as plt
 
 TIMESTAMP = 'ts'
 DATA = 'historical'
