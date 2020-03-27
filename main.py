@@ -11,8 +11,6 @@ import isalivethread
 import decision
 import anecdot
 
-import urllib
-
 import re
 
 import sys
