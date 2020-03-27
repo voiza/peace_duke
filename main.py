@@ -10,6 +10,7 @@ import isalivethread
 
 import decision
 import anecdot
+import covid19
 
 import re
 
@@ -80,8 +81,28 @@ def decide(message):
             raise(Exception)
         answers = decision.split_question(choices_only+"?")
         bot.reply_to(message, decision.decide(answers))
-    except Exception: # recover from any error, please
+    except Exception:
         bot.reply_to(message, "Лучше так: /decide одно или другое, пятое или десятое")
+        pass
+
+@bot.message_handler(commands=['covid'])
+def covid(message):
+    try:
+        covid_data = covid19.get_covid19_today('ukraine')
+        signed = lambda x: "" if None == x else " (" + ("+", "-")[x < 0] + str(x) + ")"
+        ret = """
+В Украине на {0}:
+заразилось: {1}{2}
+умерло: {3}{4}
+""".format(covid_data.day.strftime("%Y/%m/%d"),
+           covid_data.cases, 
+           signed(covid_data.delta_cases),
+           covid_data.deaths,
+           signed(covid_data.delta_deaths)
+          )
+        bot.reply_to(message, ret)
+    except Exception:
+        bot.reply_to(message, "Нет данных на сегодня")
         pass
 
 sys.tracebacklimit = 0
