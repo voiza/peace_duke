@@ -16,7 +16,7 @@ DEATHS = 'deaths'
 cache = {}
 
 class DayData(object):
-  def __init__(self, day, cases=None, deaths=None, recovered=None):
+  def __init__(self, day=None, cases=None, deaths=None, recovered=None):
     self.day = day
     self.cases = cases
     self.deaths = deaths
@@ -48,18 +48,22 @@ def get_covid19_historical(country=""):
         timeline = country_data[0].get(TIMELINE,{})
         cases = timeline.get(CASES)
         deaths = timeline.get(DEATHS)
-        ret = tuple(DayData(day=datetime.datetime.strptime(date, "%m/%d/%y"),\
+        ret = sorted(tuple(DayData(day=datetime.datetime.strptime(date, "%m/%d/%y"),\
                  cases=case,\
                  deaths=death) \
-          for date, case, death in itertools.zip_longest(cases, cases.values(), deaths.values()))
+          for date, case, death in itertools.zip_longest(cases, cases.values(), deaths.values())),
+          key=lambda x: x.day)
         return(ret)
     else:
         return tuple()
 
 def get_covid19_today(country=""):
     data = get_covid19_historical(country)
+    if not data:
+        return DayData()
     last_data = data[-1]
-    pre_last_data = data[-2]
-    last_data.delta_cases = last_data.cases - pre_last_data.cases
-    last_data.delta_deaths = last_data.deaths - pre_last_data.deaths
+    if len(data) > 1:
+        pre_last_data = data[-2]
+        last_data.delta_cases = last_data.cases - pre_last_data.cases
+        last_data.delta_deaths = last_data.deaths - pre_last_data.deaths
     return last_data
