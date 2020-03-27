@@ -40,26 +40,51 @@ bot = telebot.TeleBot(TOKEN)
 #                            ))
 
 @bot.message_handler(commands=['start'])
-def repeat_addressed_messages(message):
-    bot.reply_to(message, """\
+def start(message):
+    try:
+        bot.reply_to(message, \
+"""
 Привет, я {0}! Спроси меня, что-то вроде
 "Что мне выбрать, {0}: одно или другое, пятое или десятое?"
 Я постараюсь помочь с выбором.
 {1}
 """.format(NAME, FAREWELL))
+    except Exception:
+#        bot.reply_to(message, "Упс")
+        pass
 
 @bot.message_handler(commands=['anecdot'])
-def repeat_addressed_messages(message):
-    text = anecdot.get_anecdot()
-    if text:
-        bot.send_message(message.chat.id, text)
+def anecdot(message):
+    try:
+        text = anecdot.get_anecdot()
+        if text:
+            bot.send_message(message.chat.id, text)
+    except Exception:
+#        bot.reply_to(message, "Упс")
+        pass
 
 @bot.message_handler(content_types=["text"], regexp=TRIGGER_REGEX)
-def repeat_addressed_messages(message):
-    question = decision.extract_question(message.text, TRIGGER_REGEX)
-    if question:
-        answers = decision.split_question(question)
+def question_text(message):
+    try:
+        question = decision.extract_question(message.text, TRIGGER_REGEX)
+        if question:
+            answers = decision.split_question(question)
+            bot.reply_to(message, decision.decide(answers))
+    except Exception:
+#        bot.reply_to(message, "Упс")
+        pass
+
+@bot.message_handler(commands=['decide'])
+def decide(message):
+    try:
+        choices_only = re.sub(r'^\s*\S*\s*', '', message.text)
+        if not choices_only:
+            raise(Exception)
+        answers = decision.split_question(choices_only+"?")
         bot.reply_to(message, decision.decide(answers))
+    except Exception: # recover from any error, please
+        bot.reply_to(message, "Лучше так: /decide одно или другое, пятое или десятое")
+        pass
 
 sys.tracebacklimit = 0
 
