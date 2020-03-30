@@ -13,7 +13,7 @@ import anecdot
 import covid19
 
 import re
-
+import datetime
 import sys
 import time
 
@@ -77,21 +77,27 @@ def decide(message):
 @bot.message_handler(commands=['covid'])
 def covid(message):
     try:
-        covid_data = covid19.get_covid19_today('ukraine')
-        signed = lambda x: "" if None == x else " (" + ("+", "-")[x < 0] + str(x) + ")"
+        country = re.sub(r'^\s*\S*\s*', '', message.text) or 'ukraine'
+        covid_data = covid19.get_covid19_today(country)
+        signed = lambda x: "" if None == x else " (" + ("+", "")[x < 0] + str(x) + ")"
         ret = """
-В Украине на {0}:
-заразилось: {1}{2}
-умерло: {3}{4}
-""".format(covid_data.day.strftime("%Y/%m/%d"),
-           covid_data.cases, 
-           signed(covid_data.delta_cases),
-           covid_data.deaths,
-           signed(covid_data.delta_deaths)
+in {country} at {today}:
+cases: {cases}{today_cases}
+active: {active_cases}{recovered}
+deaths: {deaths}{today_deaths}
+
+""".format(country=country,
+           today=datetime.date.today().strftime("%Y/%m/%d"),
+           cases=covid_data.cases, 
+           today_cases=signed(covid_data.today_cases),
+           active_cases=covid_data.active_cases, 
+           recovered=signed(-covid_data.recovered),
+           deaths=covid_data.deaths,
+           today_deaths=signed(covid_data.today_deaths)
           )
         bot.reply_to(message, ret)
     except Exception:
-        bot.reply_to(message, "Нет данных на сегодня")
+        bot.reply_to(message, "no data for today")
         pass
 
 # Since lib adds @bot_name at the end of the regex, should text handlers go last?
