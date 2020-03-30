@@ -53,22 +53,11 @@ def start(message):
         pass
 
 @bot.message_handler(commands=['anecdot'])
-def anecdot(message):
+def get_anecdot(message):
     try:
         text = anecdot.get_anecdot()
         if text:
             bot.send_message(message.chat.id, text)
-    except Exception:
-#        bot.reply_to(message, "Упс")
-        pass
-
-@bot.message_handler(content_types=["text"], regexp=TRIGGER_REGEX)
-def question_text(message):
-    try:
-        question = decision.extract_question(message.text, TRIGGER_REGEX)
-        if question:
-            answers = decision.split_question(question)
-            bot.reply_to(message, decision.decide(answers))
     except Exception:
 #        bot.reply_to(message, "Упс")
         pass
@@ -103,6 +92,18 @@ def covid(message):
         bot.reply_to(message, ret)
     except Exception:
         bot.reply_to(message, "Нет данных на сегодня")
+        pass
+
+# Since lib adds @bot_name at the end of the regex, should text handlers go last?
+@bot.message_handler(content_types=["text"], regexp=TRIGGER_REGEX)
+def question_text(message):
+    try:
+        question = decision.extract_question(message.text, TRIGGER_REGEX)
+        if question:
+            answers = decision.split_question(question)
+            bot.reply_to(message, decision.decide(answers))
+    except Exception:
+#        bot.reply_to(message, "Упс")
         pass
 
 sys.tracebacklimit = 0
