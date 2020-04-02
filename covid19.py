@@ -7,6 +7,7 @@ import datetime
 import requests
 import itertools
 
+CACHE_TIME = datetime.timedelta(hours=1)
 TIMESTAMP = 'TS'
 DATA = 'DATA'
 COUNTRY = 'country'
@@ -32,7 +33,7 @@ class CountryData(object):
 
 def get_covid19_today(country=""):
     now = datetime.datetime.now()
-    if cache.get(TIMESTAMP, datetime.datetime.min) + datetime.timedelta(hours=1) < now:
+    if cache.get(TIMESTAMP, datetime.datetime.min) + CACHE_TIME < now:
         url = "https://corona.lmao.ninja/countries/" #+ country
         data_json = requests.get(url).json()
         cache[TIMESTAMP] = now
@@ -41,4 +42,4 @@ def get_covid19_today(country=""):
             cache[c.get(COUNTRY).lower()] = cd
 
     country = cache.get(country.lower())
-    return country
+    return (cache[TIMESTAMP], country)

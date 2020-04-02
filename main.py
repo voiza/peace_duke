@@ -25,6 +25,7 @@ TOKEN = config.token
 NAME = config.name
 TRIGGER_REGEX = config.trigger_regex
 FAREWELL = config.farewell
+COVID_CACHE_TIME = config.covid_cache_time
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -78,16 +79,16 @@ def decide(message):
 def covid(message):
     try:
         country = re.sub(r'^\s*\S*\s*', '', message.text) or 'ukraine'
-        covid_data = covid19.get_covid19_today(country)
+        (when, covid_data) = covid19.get_covid19_today(country)
         signed = lambda x: "" if None == x else " (" + ("+", "")[x < 0] + str(x) + ")"
         ret = """
-in {country} at {today}:
+in {country} at {when}
 cases: {cases}{today_cases}
 active: {active_cases}{recovered}
 deaths: {deaths}{today_deaths}
 
 """.format(country=country,
-           today=datetime.date.today().strftime("%Y/%m/%d"),
+           when=when.strftime("%Y/%m/%d %H:%M"),
            cases=covid_data.cases, 
            today_cases=signed(covid_data.today_cases),
            active_cases=covid_data.active_cases, 
@@ -115,6 +116,7 @@ def question_text(message):
 sys.tracebacklimit = 0
 
 if __name__ == '__main__':
+    covid19.CACHE_TIME = COVID_CACHE_TIME
     sanity_thread = isalivethread.IsAliveThread(bot)
     sanity_thread.start()
     while True:
