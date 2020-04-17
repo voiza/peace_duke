@@ -22,6 +22,10 @@ class CountryData(object):
     self.today_deaths = json.get('todayDeaths')
     self.recovered = json.get('recovered')
     self.active_cases = json.get('active')
+    self.cases_per_1m = json.get('casesPerOneMillion')
+    self.deaths_per_1m = json.get('deathsPerOneMillion')
+    self.tests = json.get('tests')
+    self.tests_per_1m = json.get('testsPerOneMillion')
 
   def __repr__(self):
     return "CASES: {0} {1}, DEATHS: {2} {3}".format(

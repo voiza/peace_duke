@@ -83,9 +83,10 @@ def covid(message):
         signed = lambda x: "" if None == x else " (" + ("+", "")[x < 0] + str(x) + ")"
         ret = """
 in {country} at {when}
-cases: {cases}{today_cases}
+cases: {cases}{today_cases} [{cases_per1m}/1M]
 active: {active_cases}{recovered}
-deaths: {deaths}{today_deaths}
+deaths: {deaths}{today_deaths} [{deaths_per1m}/1M]
+tests: {tests} [{tests_per1m}/1M]
 
 """.format(country=country,
            when=when.strftime("%Y/%m/%d %H:%M"),
@@ -94,7 +95,11 @@ deaths: {deaths}{today_deaths}
            active_cases=covid_data.active_cases, 
            recovered=signed(-covid_data.recovered),
            deaths=covid_data.deaths,
-           today_deaths=signed(covid_data.today_deaths)
+           today_deaths=signed(covid_data.today_deaths),
+           cases_per1m=covid_data.cases_per_1m,
+           deaths_per1m=covid_data.deaths_per_1m,
+           tests=covid_data.tests,
+           tests_per1m=covid_data.tests_per_1m
           )
         bot.reply_to(message, ret)
     except Exception:
