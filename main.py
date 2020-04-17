@@ -80,6 +80,7 @@ def covid(message):
     try:
         country = re.sub(r'^\s*\S*\s*', '', message.text) or 'ukraine'
         (when, covid_data) = covid19.get_covid19_today(country)
+        when = datetime.datetime.fromtimestamp(covid_data.when)
         signed = lambda x: "" if None == x else " (" + ("+", "")[x < 0] + str(x) + ")"
         ret = """
 in {country} at {when}

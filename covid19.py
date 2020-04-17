@@ -26,6 +26,7 @@ class CountryData(object):
     self.deaths_per_1m = json.get('deathsPerOneMillion')
     self.tests = json.get('tests')
     self.tests_per_1m = json.get('testsPerOneMillion')
+    self.when = json.get('updated')/1000
 
   def __repr__(self):
     return "CASES: {0} {1}, DEATHS: {2} {3}".format(
