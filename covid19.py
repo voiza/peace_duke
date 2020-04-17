@@ -34,7 +34,7 @@ class CountryData(object):
 def get_covid19_today(country=""):
     now = datetime.datetime.now()
     if cache.get(TIMESTAMP, datetime.datetime.min) + CACHE_TIME < now:
-        url = "https://corona.lmao.ninja/countries/" #+ country
+        url = "https://corona.lmao.ninja/v2/countries/" #+ country
         data_json = requests.get(url).json()
         cache[TIMESTAMP] = now
         for c in data_json:
