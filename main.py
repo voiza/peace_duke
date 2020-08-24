@@ -85,7 +85,7 @@ def covid(message):
         ret = """
 in {country} at {when}
 cases: {cases}{today_cases} [{cases_per1m}/1M]
-active: {active_cases}{recovered}
+active: {active_cases}{recovered} [{active_per1m}/1M]
 deaths: {deaths}{today_deaths} [{deaths_per1m}/1M]
 tests: {tests} [{tests_per1m}/1M]
 
@@ -94,6 +94,7 @@ tests: {tests} [{tests_per1m}/1M]
            cases=covid_data.cases, 
            today_cases=signed(covid_data.today_cases),
            active_cases=covid_data.active_cases, 
+           active_per1m=covid_data.active_cases_per_1m,
            recovered=signed(-covid_data.recovered),
            deaths=covid_data.deaths,
            today_deaths=signed(covid_data.today_deaths),
