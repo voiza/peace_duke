@@ -88,7 +88,7 @@ cases: {cases}{today_cases} [{cases_per1m}/1M]
 active: {active_cases}{recovered} [{active_per1m}/1M]
 deaths: {deaths}{today_deaths} [{deaths_per1m}/1M]
 tests: {tests} [{tests_per1m}/1M]
-
+vaccines: {vaccines} [{vaccines_per1m}/1M]
 """.format(country=country,
            when=when.strftime("%Y/%m/%d %H:%M"),
            cases=covid_data.cases, 
@@ -101,7 +101,9 @@ tests: {tests} [{tests_per1m}/1M]
            cases_per1m=covid_data.cases_per_1m,
            deaths_per1m=covid_data.deaths_per_1m,
            tests=covid_data.tests,
-           tests_per1m=covid_data.tests_per_1m
+           tests_per1m=covid_data.tests_per_1m,
+           vaccines=covid_data.vaccines,
+           vaccines_per1m=covid_data.vaccines_per_1m
           )
         bot.reply_to(message, ret)
     except Exception:

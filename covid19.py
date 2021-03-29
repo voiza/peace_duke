@@ -16,6 +16,8 @@ cache = {}
 class CountryData(object):
   def __init__(self, json={}):
     self.country = json.get('country')
+    self.population = json.get('population')
+
     self.cases = json.get('cases')
     self.today_cases = json.get('todayCases')
     self.deaths = json.get('deaths')
@@ -30,6 +32,13 @@ class CountryData(object):
     self.tests = json.get('tests')
     self.tests_per_1m = json.get('testsPerOneMillion')
     self.when = json.get('updated')/1000
+
+    self.vaccines = None
+    self.vaccines_per_1m = None
+
+  def set_vaccines(self, vaccines, population):
+    self.vaccines = vaccines
+    self.vaccines_per_1m = round(vaccines * 1000000 / population, 2)
 
   def __repr__(self):
     return "CASES: {0} {1}, DEATHS: {2} {3}".format(
@@ -48,6 +57,16 @@ def get_covid19_today(country=""):
         for c in data_json:
             cd = CountryData(c)
             cache[c.get(COUNTRY).lower()] = cd
+
+        url = "https://disease.sh/v3/covid-19/vaccine/coverage/countries?lastdays=1"
+        vac_json = requests.get(url).json()
+        for c in vac_json:
+            vac_country = c.get("country")
+            vac_country = cache.get(vac_country.lower())
+            timeline = c.get("timeline").items()
+            if vac_country and timeline:
+                last_day, vaccines = list(timeline)[-1]
+                vac_country.set_vaccines(vaccines, vac_country.population)
 
     country = cache.get(country.lower())
     return (cache[TIMESTAMP], country)
