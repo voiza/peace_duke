@@ -5,9 +5,11 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import config
-import telebot
-import isalivethread
 
+import telebot
+import flag
+
+import isalivethread
 import decision
 import anecdot
 import covid19
@@ -83,13 +85,14 @@ def covid(message):
         when = datetime.datetime.fromtimestamp(covid_data.when)
         signed = lambda x: "" if None == x else " (" + ("+", "")[x < 0] + str(x) + ")"
         ret = """
-in {country} at {when}
-cases: {cases}{today_cases} [{cases_per1m}/1M]
-active: {active_cases}{recovered} [{active_per1m}/1M]
-deaths: {deaths}{today_deaths} [{deaths_per1m}/1M]
-tests: {tests} [{tests_per1m}/1M]
-vaccines: {vaccines} [{vaccines_per1m}/1M]
+{flag} {country} at {when}
+😿 cases: {cases}{today_cases} [{cases_per1m}/1M]
+🤒 active: {active_cases}{recovered} [{active_per1m}/1M]
+⚰️ deaths: {deaths}{today_deaths} [{deaths_per1m}/1M]
+👅 tests: {tests} [{tests_per1m}/1M]
+💉 vaccines: {vaccines} [{vaccines_per1m}/1M]
 """.format(country=country,
+           flag=flag.flag(covid_data.iso2),
            when=when.strftime("%Y/%m/%d %H:%M"),
            cases=covid_data.cases, 
            today_cases=signed(covid_data.today_cases),

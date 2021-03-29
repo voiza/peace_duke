@@ -16,6 +16,7 @@ cache = {}
 class CountryData(object):
   def __init__(self, json={}):
     self.country = json.get('country')
+    self.iso2 = json.get('countryInfo')["iso2"]
     self.population = json.get('population')
 
     self.cases = json.get('cases')
