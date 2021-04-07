@@ -90,7 +90,7 @@ def covid(message):
 🤒 active: {active_cases}{recovered} [{active_per1m}/1M]
 ⚰️ deaths: {deaths}{today_deaths} [{deaths_per1m}/1M]
 👅 tests: {tests} [{tests_per1m}/1M]
-💉 vaccines: {vaccines} [{vaccines_per1m}/1M]
+💉 vaccines: {vaccines}{today_vaccines} [{vaccines_per1m}/1M]
 """.format(country=country,
            flag=flag.flag(covid_data.iso2),
            when=when.strftime("%Y/%m/%d %H:%M"),
@@ -106,6 +106,7 @@ def covid(message):
            tests=covid_data.tests,
            tests_per1m=covid_data.tests_per_1m,
            vaccines=covid_data.vaccines,
+           today_vaccines=signed(covid_data.today_vaccines),
            vaccines_per1m=covid_data.vaccines_per_1m
           )
         bot.reply_to(message, ret)

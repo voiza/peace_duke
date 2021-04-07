@@ -35,10 +35,12 @@ class CountryData(object):
     self.when = json.get('updated')/1000
 
     self.vaccines = None
+    self.today_vaccines = None
     self.vaccines_per_1m = None
 
-  def set_vaccines(self, vaccines, population):
+  def set_vaccines(self, vaccines, today_vaccines, population):
     self.vaccines = vaccines
+    self.today_vaccines = today_vaccines
     self.vaccines_per_1m = round(vaccines * 1000000 / population, 2)
 
   def __repr__(self):
@@ -59,15 +61,16 @@ def get_covid19_today(country=""):
             cd = CountryData(c)
             cache[c.get(COUNTRY).lower()] = cd
 
-        url = "https://disease.sh/v3/covid-19/vaccine/coverage/countries?lastdays=1"
+        url = "https://disease.sh/v3/covid-19/vaccine/coverage/countries?lastdays=2"
         vac_json = requests.get(url).json()
         for c in vac_json:
             vac_country = c.get("country")
             vac_country = cache.get(vac_country.lower())
-            timeline = c.get("timeline").items()
+            timeline = list(c.get("timeline").items())
             if vac_country and timeline:
-                last_day, vaccines = list(timeline)[-1]
-                vac_country.set_vaccines(vaccines, vac_country.population)
+                yesterday, yesterday_vaccines = timeline[0]
+                today, vaccines = timeline[1]
+                vac_country.set_vaccines(vaccines, vaccines - yesterday_vaccines, vac_country.population)
 
     country = cache.get(country.lower())
     return (cache[TIMESTAMP], country)
