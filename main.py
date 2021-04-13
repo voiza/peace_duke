@@ -11,7 +11,7 @@ import flag
 
 import isalivethread
 import decision
-import anecdot
+import joke
 import covid19
 
 import re
@@ -27,7 +27,6 @@ TOKEN = config.token
 NAME = config.name
 TRIGGER_REGEX = config.trigger_regex
 FAREWELL = config.farewell
-COVID_CACHE_TIME = config.covid_cache_time
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -55,10 +54,10 @@ def start(message):
 #        bot.reply_to(message, "Упс")
         pass
 
-@bot.message_handler(commands=['anecdot'])
-def get_anecdot(message):
+@bot.message_handler(commands=['joke'])
+def get_joke(message):
     try:
-        text = anecdot.get_anecdot()
+        text = joke.get_joke()
         if text:
             bot.send_message(message.chat.id, text)
     except Exception:
@@ -129,7 +128,9 @@ def question_text(message):
 sys.tracebacklimit = 0
 
 if __name__ == '__main__':
-    covid19.CACHE_TIME = COVID_CACHE_TIME
+    covid19.CACHE_TIME = config.covid_cache_time
+    joke.USERAGENT = config.joke_useragent
+    joke.THROTTLING_TIME = config.joke_throttling_time
     sanity_thread = isalivethread.IsAliveThread(bot)
     sanity_thread.start()
     while True:

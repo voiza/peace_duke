@@ -52,6 +52,7 @@ class CountryData(object):
           )
 
 def get_covid19_today(country=""):
+    global cache
     now = datetime.datetime.now()
     if cache.get(TIMESTAMP, datetime.datetime.min) + CACHE_TIME < now:
         url = "https://disease.sh/v3/covid-19/countries/" #+ country

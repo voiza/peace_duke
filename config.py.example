@@ -10,3 +10,6 @@ name = "Bot's Name"
 farewell = "Farewell!"
 
 covid_cache_time = datetime.timedelta(minutes=1)
+
+joke_useragent = "some ID for the API"
+joke_throttling_time = datetime.timedelta(seconds=1)
