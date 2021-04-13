@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
+import datetime
+
+token = "B0t'5-t0k3n-from-bo7f4ther-h3rE"
+trigger_regex = "(?imu)(name trigger regex)"
+name = "Bot's Name"
+farewell = "Farewell!"
+
+covid_cache_time = datetime.timedelta(minutes=1)
