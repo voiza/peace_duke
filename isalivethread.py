@@ -27,12 +27,16 @@ class IsAliveThread(threading.Thread):
                 continue
 
             try:
-                ret = self.telebot.get_me()
+                me = self.telebot.get_me()
+                if not me or not me.id:
+                    self.kill_bot()
+#                log(f"{me}")
             except Exception:
                 self.kill_bot()
 
             killer.cancel()
             time.sleep(self.sleep_time)
+            log("killer stopped")
 
     def kill_bot(self):
         log("killing")
