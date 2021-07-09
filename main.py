@@ -13,6 +13,7 @@ import isalivethread
 import decision
 import joke
 import covid19
+import auth
 
 import re
 import datetime
@@ -50,9 +51,15 @@ def start(message):
 Я постараюсь помочь с выбором.
 {1}
 """.format(NAME, FAREWELL))
-    except Exception:
-#        bot.reply_to(message, "Упс")
+    except Exception as e:
+#        bot.reply_to(message, f"Упс {e}")
         pass
+
+def violated(message, func, permission):
+    text = f"{message.from_user} tried to access '{func.__name__}' without '{permission}'"
+    for id in config.owner_ids:
+        bot.send_message(id, text)
+    return False
 
 @bot.message_handler(commands=['joke'])
 def get_joke(message):
@@ -60,8 +67,8 @@ def get_joke(message):
         text = joke.get_joke()
         if text:
             bot.send_message(message.chat.id, text)
-    except Exception:
-#        bot.reply_to(message, "Упс")
+    except Exception as e:
+#        bot.reply_to(message, f"Упс {e}")
         pass
 
 @bot.message_handler(commands=['decide'])
@@ -69,7 +76,7 @@ def decide(message):
     try:
         choices_only = re.sub(r'^\s*\S*\s*', '', message.text)
         if not choices_only:
-            raise(Exception)
+            raise(Exception("wrong format"))
         answers = decision.split_question(choices_only+"?")
         bot.reply_to(message, decision.decide(answers))
     except Exception:
@@ -121,8 +128,8 @@ def question_text(message):
         if question:
             answers = decision.split_question(question)
             bot.reply_to(message, decision.decide(answers))
-    except Exception:
-#        bot.reply_to(message, "Упс")
+    except Exception as e:
+#        bot.reply_to(message, f"Упс {e}")
         pass
 
 sys.tracebacklimit = 0
@@ -131,6 +138,8 @@ if __name__ == '__main__':
     covid19.CACHE_TIME = config.covid_cache_time
     joke.USERAGENT = config.joke_useragent
     joke.THROTTLING_TIME = config.joke_throttling_time
+    auth.PERMISSIONS = config.auth_permissions
+    auth.OWNER_IDS = config.owner_ids
     sanity_thread = isalivethread.IsAliveThread(bot)
     sanity_thread.start()
     while True:
