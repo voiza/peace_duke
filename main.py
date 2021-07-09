@@ -132,6 +132,15 @@ def question_text(message):
 #        bot.reply_to(message, f"Упс {e}")
         pass
 
+@bot.message_handler(commands=['info'])
+@auth.sender_requires(permission='info')
+def info(message):
+    try:
+        bot.send_message(message.from_user.id, message.reply_to_message)
+    except Exception as e:
+#        bot.reply_to(message, f"Упс {e}")
+        pass
+
 sys.tracebacklimit = 0
 
 if __name__ == '__main__':
