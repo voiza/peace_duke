@@ -1,4 +1,4 @@
 # Peace Duke the Quite Quiet One
 Massively unoptimized telegram bot
 
-dependencies: telebot, emoji-country-flag
+dependencies: PyTelegramBotAPI, emoji-country-flag
