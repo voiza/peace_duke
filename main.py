@@ -27,6 +27,8 @@ import time
 TOKEN = config.token
 NAME = config.name
 TRIGGER_REGEX = config.trigger_regex
+RAND_STICKER_REGEX = config.rand_sticker_regex
+RAND_STICKER_PACK_NAME = config.rand_sticker_pack_name
 FAREWELL = config.farewell
 
 bot = telebot.TeleBot(TOKEN)
@@ -140,6 +142,17 @@ def info(message):
             bot.send_message(message.from_user.id, message.reply_to_message)
         else:
             bot.send_message(message.from_user.id, message.chat)
+    except Exception as e:
+#        bot.reply_to(message, f"Упс {e}")
+        pass
+
+@bot.message_handler(regexp=RAND_STICKER_REGEX)
+@auth.chat_requires(permission='rand_sticker')
+def rand_sticker_reply(message):
+    try:
+        stickers = bot.get_sticker_set(RAND_STICKER_PACK_NAME)
+        sticker = decision.decide(stickers.stickers)
+        bot.send_sticker(message.chat.id, data=sticker.file_id, reply_to_message_id=message.message_id)
     except Exception as e:
 #        bot.reply_to(message, f"Упс {e}")
         pass
