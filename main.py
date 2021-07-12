@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3.6
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -149,12 +149,7 @@ if __name__ == '__main__':
     joke.THROTTLING_TIME = config.joke_throttling_time
     auth.PERMISSIONS = config.auth_permissions
     auth.OWNER_IDS = config.owner_ids
-    sanity_thread = isalivethread.IsAliveThread(bot)
-    sanity_thread.start()
-    while True:
-        try:
-            bot.polling(none_stop=True)
-        except Exception: # recover from any error, please
-            time.sleep(10)
-    sanity_thread.stop = True
-    sanity_thread.join()
+
+    print("Started")
+    bot.polling(none_stop=True)
+    print("Exitting")

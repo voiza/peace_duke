@@ -1,3 +1,4 @@
+#!/usr/bin/python3.6
 # -*- coding: utf-8 -*-
 
 import threading
@@ -17,27 +18,12 @@ class IsAliveThread(threading.Thread):
 
     def run(self):
         while not self.stop:
-            try:
-                killer = threading.Timer(self.timeout, self.kill_bot)
-                killer.start()
-                log("killer started")
-            except Exception as e:
-                log("killer could not start: {}".format(e))
-                time.sleep(self.sleep_time)
-                continue
+            time.sleep(self.sleep_time)
 
             try:
                 me = self.telebot.get_me()
                 if not me or not me.id:
-                    self.kill_bot()
-#                log(f"{me}")
+                    log("Could not get bot")
+                self.telebot.stop_polling()
             except Exception:
-                self.kill_bot()
-
-            killer.cancel()
-            time.sleep(self.sleep_time)
-            log("killer stopped")
-
-    def kill_bot(self):
-        log("killing")
-        self.telebot.stop_polling()
+                self.telebot.stop_polling()
