@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.7
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
