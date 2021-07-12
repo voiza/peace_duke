@@ -136,7 +136,10 @@ def question_text(message):
 @auth.sender_requires(permission='info')
 def info(message):
     try:
-        bot.send_message(message.from_user.id, message.reply_to_message)
+        if message.reply_to_message is not None:
+            bot.send_message(message.from_user.id, message.reply_to_message)
+        else:
+            bot.send_message(message.from_user.id, message.chat)
     except Exception as e:
 #        bot.reply_to(message, f"Упс {e}")
         pass
