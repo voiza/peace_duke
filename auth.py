@@ -4,7 +4,7 @@
 import functools
 
 PERMISSIONS = {}
-OWNER_IDS = 0
+OWNER_IDS = tuple()
 
 def sender_requires(_func=None, *, permission=None, on_violation=None):
     def decorator_permission(func):
