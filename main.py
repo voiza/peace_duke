@@ -19,6 +19,8 @@ import re
 import datetime
 import sys
 import time
+import json
+import codecs
 
 #import logging
 #logger = telebot.logger
@@ -139,9 +141,13 @@ def question_text(message):
 def info(message):
     try:
         if message.reply_to_message is not None:
-            bot.send_message(message.from_user.id, message.reply_to_message)
+            js = message.reply_to_message.json
+            js["text"] = "..."
+            payload = codecs.decode(json.dumps(js, sort_keys=True, indent=1), 'unicode-escape')
         else:
-            bot.send_message(message.from_user.id, message.chat)
+            payload = message.chat
+        bot.send_message(message.from_user.id, payload)
+        bot.delete_message(message.chat.id, message.message_id)
     except Exception as e:
 #        bot.reply_to(message, f"Упс {e}")
         pass
