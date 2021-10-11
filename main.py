@@ -14,6 +14,7 @@ import decision
 import joke
 import covid19
 import auth
+from personal_percent import PersonalPercent
 
 import re
 import datetime
@@ -159,6 +160,17 @@ def rand_sticker_reply(message):
         stickers = bot.get_sticker_set(RAND_STICKER_PACK_NAME)
         sticker = decision.decide(stickers.stickers)
         bot.send_sticker(message.chat.id, data=sticker.file_id, reply_to_message_id=message.message_id)
+    except Exception as e:
+#        bot.reply_to(message, f"Упс {e}")
+        pass
+
+@bot.message_handler(commands=['cock'])
+def rand_sticker_reply(message):
+    try:
+        pp = PersonalPercent([(x,x) for x in [3,13,37]], f"chat:{message.chat.id}", message.from_user.id)
+        seconds_in_hour = 60*60
+        percent = 100*pp.get(message.date/seconds_in_hour)
+        bot.reply_to(message, f"Вы таки петух на {percent:.0f}%!")
     except Exception as e:
 #        bot.reply_to(message, f"Упс {e}")
         pass
