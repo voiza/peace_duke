@@ -6,7 +6,6 @@ import hashlib
 import numpy as np
 from typing import List, Tuple
 import matplotlib.pyplot as plt
-from PIL import Image
 
 from datetime import datetime
 
@@ -112,6 +111,8 @@ class PersonalPercent(object):
         return bytes
 
 def __example():
+    from PIL import Image
+
     SEED="some-static-garbage"
     ID=75635000
 
