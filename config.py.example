@@ -21,5 +21,6 @@ rand_sticker_pack_name = "target_stickerpack_name"
 auth_permissions = {'joke' : (1337, 420, 69,)   # user IDs or chat IDs
                    ,'covid': (420, 69,)
                    ,'rand_sticker': (69,)
+                   ,'cock_image': (420, -13,)
                    } 
 owner_ids = (2128506,)

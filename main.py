@@ -163,8 +163,7 @@ def rand_sticker_reply(message):
 #        bot.reply_to(message, f"Упс {e}")
         pass
 
-@bot.message_handler(commands=['cock'])
-def rand_sticker_reply(message):
+def no_image_cock(message, func, permission):
     try:
         pp = PersonalPercent(((x,x) for x in [3,13,37]),
                              f"chat:{message.chat.id}",
@@ -173,6 +172,26 @@ def rand_sticker_reply(message):
         bot.reply_to(message, f"Вы таки петух на {percent:.0f}%!")
     except Exception as e:
 #       bot.reply_to(message, f"Упс {e}")
+        pass
+    return False
+
+@bot.message_handler(commands=['cock'])
+@auth.chat_requires(permission='cock_image', on_violation=no_image_cock)
+def cock_reply(message):
+    try:
+        chat_id = message.chat.id
+        bot.send_chat_action(chat_id, 'upload_photo')
+        pp = PersonalPercent([(x,x) for x in [3,13,37]],
+                             f"chat:{message.chat.id}",
+                             message.from_user.id)
+        percent = 100*pp.get_ts(message.date)
+        image = pp.get_image(message.date, f"@{message.from_user.username}")
+
+        cock_msg = f"@{message.from_user.username} таки петух на {percent:.0f}%!"
+        bot.send_photo(chat_id, image, reply_to_message_id=message.id, caption=cock_msg)
+    except Exception as e:
+        no_image_cock(message)
+#        bot.reply_to(message, f"Упс {e}")
         pass
 
 sys.tracebacklimit = 0
