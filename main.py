@@ -167,12 +167,13 @@ def rand_sticker_reply(message):
 @bot.message_handler(commands=['cock'])
 def rand_sticker_reply(message):
     try:
-        pp = PersonalPercent([(x,x) for x in [3,13,37]], f"chat:{message.chat.id}", message.from_user.id)
-        seconds_in_hour = 60*60
-        percent = 100*pp.get(message.date/seconds_in_hour)
+        pp = PersonalPercent(((x,x) for x in [3,13,37]),
+                             f"chat:{message.chat.id}",
+                             message.from_user.id)
+        percent = 100*pp.get_ts(message.date)
         bot.reply_to(message, f"Вы таки петух на {percent:.0f}%!")
     except Exception as e:
-#        bot.reply_to(message, f"Упс {e}")
+#       bot.reply_to(message, f"Упс {e}")
         pass
 
 sys.tracebacklimit = 0

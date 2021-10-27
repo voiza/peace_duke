@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import io
 import hashlib
 import numpy as np
 from typing import List, Tuple
+import matplotlib.pyplot as plt
+from PIL import Image
+
+from datetime import datetime
 
 def lerp(a, b, x):
     return (1 - x) * a + x * b
@@ -46,12 +51,19 @@ class PersonalPercent(object):
     Harmonic = Tuple[Frequency, AmplitudeInverse]
     Harmonics = List[Harmonic]
 
-    def __init__(self, harmonics: Harmonics, pepper: str, id: int):
-        self.signature=get_digest(pepper, id)
+    def __init__(self, harmonics: Harmonics, seed: str, id: int):
+        self.signature=get_digest(seed, id)
         self.harmonics = harmonics
         self.max = 0
+        self.div = 60*60*10 # frequency reduction factor
 
-    def get(self, t: float) -> float:
+        self.img_dpi=120
+        self.img_size_inches=(6,5)
+
+    def get_ts(self, ts: int) -> float:
+        return self.get_float(ts/self.div)
+
+    def get_float(self, t: float) -> float:
         ret = 0
         mul = 0
         for z, h in enumerate(self.harmonics):
@@ -64,19 +76,56 @@ class PersonalPercent(object):
 
         return ret
 
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
+    def _fig2bytes(self, fig):
+        buf = io.BytesIO()
+        fig.savefig(buf)
+        buf.seek(0)
+        return buf
+    
+    def get_image(self, ts: int, name: str, scale: int=60, shift: int=24):
+        t = ts / self.div
+        v = self.get_float(t)
 
-    PEPPER="some-static-garbage"
+        min_x = t-(scale+shift*2)/self.div/2
+        max_x = t+(scale-shift*2)/self.div/2
+        ls = np.linspace(min_x, max_x, 200)
+        value = np.vectorize(lambda i: self.get_float(i))(ls)
+        plt.figure(figsize=self.img_size_inches, dpi=self.img_dpi)
+        plt.plot(ls, value)
+        plt.plot(t, v, 'r+')
+
+        plt.title(name)
+
+        delta = (max_x-min_x)/10
+        locs = np.arange(min_x, max_x+delta, delta)
+        lbs = (datetime.fromtimestamp(loc*self.div).strftime("%H:%M:%S") for loc in locs)
+        plt.xticks(locs, lbs, rotation=25)
+
+        locs, labels = plt.yticks()
+        plt.yticks(locs, [f"{percent*100:.1f}%" for percent in locs])
+
+        plt.grid(linestyle=':', linewidth=1)
+
+        fig = plt.gcf()
+        bytes = self._fig2bytes(fig)
+        plt.close()
+        return bytes
+
+def __example():
+    SEED="some-static-garbage"
     ID=75635000
 
-    #harmonics = [13,37] #~25 oscilations per 1t, max=0.99572
-    #harmonics = [3,11] #~5 oscilations per 1t, max=0.99067
-    harmonics = [3,13,37]
-    #harmonics = [2,51] #~3 oscilations per 1t, max=0.99067
-    t = np.linspace(0, 10, 60*60)
+    harmonics = (3,13,37)
+    
+    pp = PersonalPercent([(x,x) for x in harmonics], SEED, ID)
+    for a in [0,30,60]: #example of half a minute progress in 3 iterations
+        import time
+        ts = 1634048870 #time.time()
+        x = pp.get_image(ts+a, "me")
+        pil_image = Image.open(x)
+        pil_image.show()
+    return
 
-    pp = PersonalPercent([(x,x) for x in harmonics], PEPPER, ID)
     value = np.vectorize(pp.get)(t)
 
     plt.plot(t, value)
@@ -84,3 +133,6 @@ if __name__ == "__main__":
     plt.ylabel('%%')
     plt.xlabel('Time(t)')
     plt.show()
+
+if __name__ == "__main__":
+    __example()
