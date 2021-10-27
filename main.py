@@ -9,7 +9,6 @@ import config
 import telebot
 import flag
 
-import isalivethread
 import decision
 import joke
 import covid19
