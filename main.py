@@ -184,6 +184,7 @@ def cock_reply(message):
         pp = PersonalPercent([(x,x) for x in [3,13,37]],
                              f"chat:{message.chat.id}",
                              message.from_user.id)
+        pp.time_fmt_legend="%H:%M"
         percent = 100*pp.get_ts(message.date)
         image = pp.get_image(message.date, f"@{message.from_user.username}", scale=60*30, shift=48*30)
 

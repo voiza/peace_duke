@@ -59,6 +59,8 @@ class PersonalPercent(object):
         self.img_dpi=120
         self.img_size_inches=(6,5)
 
+        self.time_fmt_legend="%H:%M:%S"
+
     def get_ts(self, ts: int) -> float:
         return self.get_float(ts/self.div)
 
@@ -97,7 +99,7 @@ class PersonalPercent(object):
 
         delta = (max_x-min_x)/10
         locs = np.arange(min_x, max_x+delta, delta)
-        lbs = (datetime.fromtimestamp(loc*self.div).strftime("%H:%M:%S") for loc in locs)
+        lbs = (datetime.fromtimestamp(loc*self.div).strftime(self.time_fmt_legend) for loc in locs)
         plt.xticks(locs, lbs, rotation=25)
 
         locs, labels = plt.yticks()
