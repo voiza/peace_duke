@@ -6,6 +6,24 @@ import functools
 PERMISSIONS = {}
 OWNER_IDS = tuple()
 
+def sender_has_permisson(message, permission):
+    try:
+        user_id = message.from_user.id
+        has_access = user_id in OWNER_IDS
+        if not has_access:
+            has_access = user_id in PERMISSIONS.get(permission,[])
+        return has_access
+    except Exception:
+        return False
+
+def chat_has_permisson(message, permission):
+    try:
+        chat_id = message.chat.id
+        has_access = chat_id in PERMISSIONS.get(permission,[])
+        return has_access
+    except Exception:
+        return False
+
 def sender_requires(_func=None, *, permission=None, on_violation=None):
     def decorator_permission(func):
         @functools.wraps(func)
