@@ -163,35 +163,35 @@ def rand_sticker_reply(message):
 #        bot.reply_to(message, f"Упс {e}")
         pass
 
-def no_image_cock(message, func, permission):
-    try:
-        pp = PersonalPercent(((x,x) for x in [3,13,37]),
-                             f"chat:{message.chat.id}",
-                             message.from_user.id)
-        percent = 100*pp.get_ts(message.date)
-        bot.reply_to(message, f"Вы таки петух на {percent:.0f}%!")
-    except Exception as e:
-#       bot.reply_to(message, f"Упс {e}")
-        pass
-    return False
-
 @bot.message_handler(commands=['cock'])
-@auth.chat_requires(permission='cock_image', on_violation=no_image_cock)
+#@auth.chat_requires(permission='cock_image', on_violation=no_image_cock)
 def cock_reply(message):
     try:
+        user = message.reply_to_message.from_user if message.reply_to_message else message.from_user
         chat_id = message.chat.id
-        bot.send_chat_action(chat_id, 'upload_photo')
         pp = PersonalPercent([(x,x) for x in [3,13,37]],
                              f"chat:{message.chat.id}",
-                             message.from_user.id)
-        pp.time_fmt_legend="%H:%M"
+                             user.id)
         percent = 100*pp.get_ts(message.date)
-        image = pp.get_image(message.date, f"@{message.from_user.username}", scale=60*30, shift=48*30)
+        if user.username is not None:
+            name = f"@{user.username}"
+        else:
+            name = f"{user.first_name or ''} {user.last_name or ''}"
+        cock_msg = f"{name} таки петух на {percent:.0f}%!"
 
-        cock_msg = f"@{message.from_user.username} таки петух на {percent:.0f}%!"
-        bot.send_photo(chat_id, image, reply_to_message_id=message.id, caption=cock_msg)
+        if auth.chat_has_permisson(message, permission='cock_image'):
+            pp.time_fmt_legend="%H:%M"
+            bot.send_chat_action(chat_id, 'upload_photo')
+            image = pp.get_image(message.date,
+                                 f"{name}",
+                                 scale=60*30,
+                                 shift=48*30
+                                )
+            bot.send_photo(chat_id, image, reply_to_message_id=message.id, caption=cock_msg)
+        else:
+            bot.reply_to(message, cock_msg)
+
     except Exception as e:
-        no_image_cock(message)
 #        bot.reply_to(message, f"Упс {e}")
         pass
 
