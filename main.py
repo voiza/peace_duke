@@ -185,7 +185,7 @@ def cock_reply(message):
                              f"chat:{message.chat.id}",
                              message.from_user.id)
         percent = 100*pp.get_ts(message.date)
-        image = pp.get_image(message.date, f"@{message.from_user.username}")
+        image = pp.get_image(message.date, f"@{message.from_user.username}", scale=60*30, shift=48*30)
 
         cock_msg = f"@{message.from_user.username} таки петух на {percent:.0f}%!"
         bot.send_photo(chat_id, image, reply_to_message_id=message.id, caption=cock_msg)

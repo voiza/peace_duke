@@ -81,12 +81,12 @@ class PersonalPercent(object):
         buf.seek(0)
         return buf
     
-    def get_image(self, ts: int, name: str, scale: int=60, shift: int=24):
+    def get_image(self, ts: int, name: str, scale: int=60, shift: int=48):
         t = ts / self.div
         v = self.get_float(t)
 
-        min_x = t-(scale+shift*2)/self.div/2
-        max_x = t+(scale-shift*2)/self.div/2
+        min_x = t-(scale+shift)/self.div/2
+        max_x = t+(scale-shift)/self.div/2
         ls = np.linspace(min_x, max_x, 200)
         value = np.vectorize(lambda i: self.get_float(i))(ls)
         plt.figure(figsize=self.img_size_inches, dpi=self.img_dpi)
@@ -119,10 +119,10 @@ def __example():
     harmonics = (3,13,37)
     
     pp = PersonalPercent([(x,x) for x in harmonics], SEED, ID)
-    for a in [0,30,60]: #example of half a minute progress in 3 iterations
+    for a in [0,5*60,10*60]: #example of 5-minutes progress in 3 iterations
         import time
-        ts = 1634048870 #time.time()
-        x = pp.get_image(ts+a, "me")
+        ts = 1634048870+350435 #time.time()
+        x = pp.get_image(ts+a, "me", scale=60*30, shift=48*30)
         pil_image = Image.open(x)
         pil_image.show()
     return
